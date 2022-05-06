@@ -1,6 +1,6 @@
 {
   "name": "write-vscodestat",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "write-vscodestat makes it easy to collect, filter and save vscode statistics to csv files.",
   "main": "dist/index.min.js",
   "files": [],
