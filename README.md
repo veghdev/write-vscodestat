@@ -19,9 +19,9 @@ npm install write-vscodestat
 ```js
 const WriteVscodeStat = require("write-vscodestat").default;
 
-const targetPackage = "gitlens";
+const targetExtension = "gitlens";
 const csvDir = "stats/gitlens";
-const writevscodestat = new WriteVscodeStat(targetPackage, csvDir);
+const writevscodestat = new WriteVscodeStat(targetExtension, csvDir);
 
 writevscodestat.datePeriod = "month";
 writevscodestat.writeVscodeStat();
