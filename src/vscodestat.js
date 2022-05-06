@@ -21,15 +21,15 @@ const StatPeriod = new Enum(
  * @property {string|null} [outDir] - path of the directory where
  *     the gathered data will be saved into csv files
  * @property {StatPeriod} [datePeriod=year] - grouping of the statistics
- * @property {boolean} [writePackageName=false] - flag used to write the name of the package into a csv column
+ * @property {boolean} [writeExtensionName=false] - flag used to write the name of the extension into a csv column
  * @property {boolean} [mergeStoredData=true] - flag used to merge actual day's vscode statistics with previously stored
  */
 class WriteVscodeStat {
-    #packageName;
+    #extensionName;
     outDir;
 
     #datePeriod;
-    #writePackageName;
+    #writeExtensionName;
     #mergeStoredData;
 
     #statisticsTypes = {
@@ -46,25 +46,25 @@ class WriteVscodeStat {
 
     /**
      * Initialize WriteVscodeStat class
-     * @param {string} packageName - name of the target vscode package
+     * @param {string} extensionName - name of the target vscode extension
      * @param {string|null} [outDir] - path of the directory where
      *     the gathered data will be saved into csv files
      */
-    constructor(packageName, outDir) {
-        if (!packageName) {
-            throw new Error("packageName is a required argument");
+    constructor(extensionName, outDir) {
+        if (!extensionName) {
+            throw new Error("extensionName is a required argument");
         }
 
-        this.#packageName = packageName;
+        this.#extensionName = extensionName;
         this.outDir = outDir;
 
         this.#datePeriod = StatPeriod.year;
-        this.#writePackageName = false;
+        this.#writeExtensionName = false;
         this.#mergeStoredData = true;
     }
 
-    get packageName() {
-        return this.#packageName;
+    get extensionName() {
+        return this.#extensionName;
     }
 
     get datePeriod() {
@@ -75,12 +75,12 @@ class WriteVscodeStat {
         this.#datePeriod = StatPeriod.get(datePeriod);
     }
 
-    get writePackageName() {
-        return this.#writePackageName;
+    get writeExtensionName() {
+        return this.#writeExtensionName;
     }
 
-    set writePackageName(writePackageName) {
-        this.#writePackageName = Boolean(writePackageName);
+    set writeExtensionName(writeExtensionName) {
+        this.#writeExtensionName = Boolean(writeExtensionName);
     }
 
     get mergeStoredData() {
@@ -92,8 +92,8 @@ class WriteVscodeStat {
     }
 
     /**
-     * Returns actual day's vscode statistics for a package
-     * @returns {Promise} Promise object represents the actual day's vscode statistics for a package
+     * Returns actual day's vscode statistics for an extension
+     * @returns {Promise} Promise object represents the actual day's vscode statistics for an extension
      */
     getVscodeStat() {
         return new Promise((resolve) => {
@@ -129,8 +129,8 @@ class WriteVscodeStat {
                     const statKey = day;
                     const statValues = [];
                     statValues.push(day);
-                    if (this.writePackageName) {
-                        statValues.push(this.#packageName);
+                    if (this.writeExtensionName) {
+                        statValues.push(this.#extensionName);
                     }
                     standardOutput.statistics.forEach((stat) => {
                         this.#statisticsTypes[stat.statisticName] = stat.value;
@@ -148,9 +148,9 @@ class WriteVscodeStat {
     }
 
     /**
-     * Writes actual day's vscode statistics for a package
+     * Writes actual day's vscode statistics for an extension
      * @param {string|null} [postfix=vscodestat] - postfix of the csv file
-     * @returns {Promise} Promise object represents the actual day's vscode statistics for a package
+     * @returns {Promise} Promise object represents the actual day's vscode statistics for an extension
      */
     writeVscodeStat(postfix = "vscodestat") {
         return new Promise((resolve) => {
@@ -230,7 +230,7 @@ class WriteVscodeStat {
                 return resolve(csvData);
             }
             const csvFilePath = this.outDir + "/" + csvFile;
-            const writePackageName = this.writePackageName;
+            const writeExtensionName = this.writeExtensionName;
             const statisticsTypes = this.#statisticsTypes;
             fs.stat(csvFilePath, function (err) {
                 if (err != null) {
@@ -244,8 +244,8 @@ class WriteVscodeStat {
                                 const statKey = row.date;
                                 const statValues = [];
                                 statValues.push(row.date);
-                                if (writePackageName) {
-                                    statValues.push(row.package);
+                                if (writeExtensionName) {
+                                    statValues.push(row.extension);
                                 }
                                 for (const [key] of Object.entries(
                                     statisticsTypes
@@ -272,8 +272,8 @@ class WriteVscodeStat {
                 for (const [key, value] of Object.entries(stats)) {
                     const csvFilePath = this.outDir + "/" + key;
                     const header = ["date"];
-                    if (this.writePackageName) {
-                        header.push("package");
+                    if (this.writeExtensionName) {
+                        header.push("extension");
                     }
                     for (const [key] of Object.entries(this.#statisticsTypes)) {
                         header.push(key);
